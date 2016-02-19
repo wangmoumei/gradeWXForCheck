@@ -71,6 +71,9 @@ section.animated{
 			}
 			li{
 				padding-bottom: 20px;
+                .ui-badge-cornernum{
+                    top:1px;right:5px;
+                }
 			}
 		}
 	}
@@ -104,4 +107,29 @@ section.animated{
 			color: #333;
 		}
 	}
+    .my-notice{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-box-pack: center;
+        -webkit-box-align: center;
+        text-align: center;
+        i{
+            line-height: 100px;
+            font-size: 100px;
+            margin-bottom: 20px;
+            color: rgba(0,0,0,.3);
+        }
+        p{
+            font-size: 16px;
+            line-height: 20px;
+            color: #bbb;
+            text-align: center;
+            padding: 0 15px;
+        }
+        .btn-box{
+            width:100%;
+            box-sizing: border-box;
+            padding:25px 15px; 
+        }
+    }
 }

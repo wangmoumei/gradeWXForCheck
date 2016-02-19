@@ -1,7 +1,6 @@
 App.Models.WeekModel = Backbone.Model.extend({
     defaults: {
-        id:0,
-        name: '12周'
+        week: 0
     }
 });
 App.Collections.WeekList = Backbone.Collection.extend({

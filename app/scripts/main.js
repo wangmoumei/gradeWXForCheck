@@ -38,3 +38,4 @@ $('#selectWeek').click(function(){
 $('#selectBoxClose').click(function(){
 	$('#selectBox').removeClass('show fadeIn').addClass('fadeOut');
 })
+$('.my-notice').height(document.documentElement.clientHeight - 180);

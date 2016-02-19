@@ -39,11 +39,11 @@
         <header class="ui-header ui-header-positive ui-border-b">
             <i class="return" onclick="location.href='#login'">寝室绑定</i>
             <h1>寝室打分</h1>
-            <button class="ui-btn" id="selectWeek">12周</button>
+            <button class="ui-btn" id="selectWeek">周</button>
         </header>
         <div id="selectBox" class="ui-actionsheet hide animated">  
             <div class="ui-actionsheet-cnt">
-                <h4>选择</h4>
+                <h4>暂无记录</h4>
                 <div id="selectScroller">
                     <ul class="select-list">
                     </ul>
@@ -52,7 +52,7 @@
             </div>
             <script type="text/template" id="selectWeekTemplate">
                 <% for(var i=0;i<list.length;i++){%>
-                    <li data-real="<%= i %>"><a><%= list.models[i].get('name') %></a></li>
+                    <li data-real="<%= list.models[i].get('week') %>" ><a style="<%if(list.models[i].get('week') == now) print('color:#228feb;')%>"><%= list.models[i].get('week') %>周</a></li>
                 <%}%>
             </script>     
         </div>
@@ -64,34 +64,55 @@
                 </ul>
                 <ul class="ui-tab-content">
                     <li id="gradeList" class="current" id="">
-                        <table class="ui-table ui-border">
-                            <tbody>
-
-                            </tbody>
-                        </table>
+                        <div class="my-notice"><i class="ui-icon-warn-lg"></i><p>正在查询记录</p></div>
                     </li>
                     <li id="topList">
-                        <table class="ui-table ui-border">
-                            <thead>
-                                <tr><th>排名</th><th>楼栋</th><th>平均分</th></tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
+                        <div class="my-notice"><i class="ui-icon-warn-lg"></i><p>暂无记录</p></div>
                     </li>
                 </ul>
             </div>
         </div>
         <script type="text/template" id="gradeTableTemplate">
-        <% for(var i=0;i<room.get('grade').length;i++){   %>
-            <tr><td><%=room.get('grade')[i].name  %></td><td width="40%"><%=room.get('grade')[i].grade%></td></tr>
+        <table class="ui-table ui-border">
+            <tbody>
+        <% var sum = 0,msum = 0; 
+            for(var i=0;i<grade.length;i++){   
+            sum += grade.models[i].get('score');
+            msum += grade.models[i].get('minus');
+        %>
+            <tr>
+                <td>
+                    <%=grade.models[i].get('name')  %>
+                </td>
+                <td width="40%">
+                    <%=grade.models[i].get('score')%>
+                    <% if(grade.models[i].get('minus')) print('<span class="ui-badge-cornernum">' + grade.models[i].get('minus') +'</span>') %>
+                </td>
+            </tr>
         <%}%>
+            <tr>
+                <td>
+                    总计
+                </td>
+                <td width="40%">
+                    <%=sum%>
+                    <% if(msum) print('<span class="ui-badge-cornernum">' + msum +'</span>') %>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         </script>
         <script type="text/template" id="topTableTemplate">
+        <table class="ui-table ui-border">
+            <thead>
+                <tr><th>排名</th><th>楼栋</th><th>平均分</th></tr>
+            </thead>
+            <tbody>
         <% for(var i=0;i<list.models.length;i++){   %>
             <tr><td><%=(i+1)%></td><td><%=list.models[i].get('name') %></td><td><%=list.models[i].get('grade') %></td></tr>
         <%}%>
+            </tbody>
+        </table>
         </script>
     </div>
     <section id="login" class="fadeIn animated hide"></section>
@@ -107,7 +128,7 @@
                         <option value="-1">请选择</option>
                         <%
                             for(var i=0;i<areas.list.length;i++){
-                                print('<option value="' + i + '" '+ (areas.list.models[i].get('id') == areas.chosen?'selected':'') +'>'+areas.list.models[i].get('name')+'</option>');
+                                print('<option value="' + i + '" '+ (areas.list.models[i].get('areaid') == areas.chosen?'selected':'') +'>'+areas.list.models[i].get('areaname')+'</option>');
                             }
                         %>
                     </select>
@@ -121,7 +142,7 @@
                         <%
                             if(flats.list)
                                 for(var i=0;i<flats.list.length;i++){
-                                    print('<option value="'+i+'" '+ (flats.list.models[i].get('id') == flats.chosen?'selected':'') +'>'+flats.list.models[i].get('name')+'</option>');
+                                    print('<option value="'+i+'" '+ (flats.list.models[i].get('flatid') == flats.chosen?'selected':'') +'>'+flats.list.models[i].get('flatname')+'</option>');
                                 }
                         %>
                     </select>
@@ -137,11 +158,11 @@
                                 if(rooms.floor){
                                     c = rooms.floor;
                                 }else if(rooms.chosen){
-                                    var a = _.find(rooms.list.models,function(a){return a.get('id') == rooms.chosen;});
-                                    c = parseInt(parseInt(a.get('name'))/100) || 0;
+                                    var a = _.find(rooms.list.models,function(a){return a.get('roomid') == rooms.chosen;});
+                                    c = parseInt(parseInt(a.get('roomname'))/100) || 0;
                                 }
                                 for(var i=0;i<rooms.list.length;i++){
-                                    var nn = parseInt(parseInt(rooms.list.models[i].get('name'))/100);
+                                    var nn = parseInt(parseInt(rooms.list.models[i].get('roomname'))/100);
                                     if(nn!=n){
                                         print('<option value="'+nn+'" '+ (nn == c?'selected':'') +'>'+nn+'</option>');
                                         n = nn;
@@ -159,12 +180,12 @@
                         <%
                             if(rooms.list){
                                 if(!rooms.floor){
-                                    rooms.floor = parseInt(parseInt(rooms.list.models[0].get('name'))/100);
+                                    rooms.floor = parseInt(parseInt(rooms.list.models[0].get('roomname'))/100);
                                 }
-                                var list = _.filter(rooms.list.models,function(a){ return parseInt(parseInt(a.get('name'))/100) == rooms.floor;})
+                                var list = _.filter(rooms.list.models,function(a){ return parseInt(parseInt(a.get('roomname'))/100) == rooms.floor;})
                                 console.log(list);
                                 for(var i=0;i<list.length;i++){
-                                    print('<option value="'+list[i].get('id')+'" '+ (list[i].get('id') == rooms.chosen?'selected':'') +'>'+list[i].get('name')+'</option>');
+                                    print('<option value="'+list[i].get('roomid')+'" '+ (list[i].get('roomid') == rooms.chosen?'selected':'') +'>'+list[i].get('roomname')+'</option>');
                                 }
                             }
                         %>
@@ -208,6 +229,7 @@
     <script src="scripts/model/Room.js"></script>
     <script src="scripts/model/Top.js"></script>
     <script src="scripts/model/Week.js"></script>
+    <script src="scripts/model/Grade.js"></script>
     
     <script src="scripts/view/UserInfo.js"></script>
     <script src="scripts/view/Index.js"></script>

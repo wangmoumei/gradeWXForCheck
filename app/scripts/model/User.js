@@ -4,7 +4,8 @@ App.Models.UserModel = Backbone.Model.extend({
 		areaid:0,
 		flatid:0,
 		roomid:0,
-        name: ''
+        name: '',
+        openid:''
     }
 });
 App.Collections.UserList = Backbone.Collection.extend({
